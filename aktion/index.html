@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Burgstallfest Challenge</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #111111;
+      --card: #1d1d1d;
+      --text: #ffffff;
+      --muted: #cfcfcf;
+      --accent: #ffd54a;
+      --overlay: rgba(0, 0, 0, 0.72);
+      --whitecard: #ffffff;
+      --darktext: #111111;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #0f0f0f, #1b1b1b);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    .hero {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 2rem;
+      line-height: 1.1;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .meta {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .meta-item {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 14px 16px;
+      border-radius: 16px;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 14px;
+      background: var(--accent);
+      color: #111;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 12px 16px;
+      border-radius: 999px;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+
+    .overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: var(--whitecard);
+      color: var(--darktext);
+      border-radius: 24px;
+      padding: 22px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .badge {
+      display: inline-block;
+      background: #111;
+      color: #fff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0 14px;
+    }
+
+    .box {
+      background: #f4f4f4;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #666;
+      margin-bottom: 6px;
+    }
+
+    .value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      border: 0;
+      background: transparent;
+      font-size: 1.6rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .hint {
+      color: #555;
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+
+    .footer-links {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .footer-links a {
+      color: #111;
+      font-weight: 700;
+    }
+
+    .insta-button {
+      display: block;
+      margin-top: 18px;
+      background: #E1306C;
+      color: #fff;
+      padding: 16px;
+      border-radius: 16px;
+      text-align: center;
+      font-weight: 800;
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    .claim-button {
+      display: none;
+      width: 100%;
+      margin-top: 12px;
+      background: #111;
+      color: #fff;
+      padding: 14px;
+      border: none;
+      border-radius: 16px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 560px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Burgstallfest Aktion</h1>
+      <p>Scan den QR-Code am Pulli und hol dir deine Challenge. Wenn du sie erfüllst, bekommst du einen Gutschein fürs Fest.</p>
+
+      <div class="meta">
+        <div class="meta-item"><strong>Datum:</strong> 26-28. Juni 2026</div>
+        <div class="meta-item"><strong>Instagram:</strong> <a href="https://instagram.com/burgstallfest" target="_blank" rel="noopener noreferrer">@burgstallfest</a></div>
+      </div>
+
+      <a class="button" href="?from=qr">Challenge öffnen</a>
+    </section>
+  </div>
+
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="challengeMainValue">
+      <button id="closeBtn" class="close" aria-label="Schließen">×</button>
+      <div class="badge">Burgstallfest Challenge</div>
+
+      <div class="grid">
+        <div class="box" style="grid-column: 1 / -1;">
+          <div class="label">Deine Challenge</div>
+          <div id="challengeMainValue" class="value" style="font-size:1.45rem; line-height:1.35;">
+            Wird geladen …
+          </div>
+        </div>
+        <div class="box">
+          <div class="label">Gültig noch</div>
+          <div id="timerValue" class="value">--:--</div>
+        </div>
+      </div>
+
+      <p class="hint">Zeig uns diese Seite mit der Challenge vor.</p>
+
+      <div class="footer-links">
+        <span>📅 26-28. Juni 2026</span>
+        <a href="https://instagram.com/burgstallfest" target="_blank" rel="noopener noreferrer">Instagram öffnen</a>
+      </div>
+
+      <a
+        id="instaDeepLink"
+        href="https://instagram.com/_u/burgstallfest"
+        class="insta-button"
+      >
+        📸 In Instagram öffnen & folgen
+      </a>
+
+      <p id="instaHint" class="hint" style="display:none; margin-top:12px; font-weight:700; color:#b0004f;">
+        Für diese Challenge: Poste auf Instagram und markiere @burgstallfest.
+      </p>
+
+      <button id="claimBtn" type="button" class="claim-button">
+        ✅ Post erstellt → Gutschein holen
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const LOCK_MS = 5 * 60 * 1000;
+    const STORAGE_KEY = "burgstallfest_challenge_v1";
+
+    const challenges = [
+      "Mach 3 Hampelmänner vor uns und du bekommst einen Gutschein.",
+      "Rede uns mit dem Codewort Oachkatzlschwoaf an und du bekommst einen Gutschein.",
+      "Sing 2 Zeilen von einem Austropop-Lied.",
+      "Mach mit einem von uns ein Selfie und poste es auf Instagram und markiere @burgstallfest.",
+      "Bestell dein Getränk im stärksten Dialekt.",
+      "Erzähl uns deinen schlechtesten Flachwitz.",
+      "Mach einen Luftgitarren-Solo für 5 Sekunden.",
+      "Sag 'Burgstallfest is a Wahnsinn' mit voller Überzeugung.",
+      "Folge uns auf Instagram und zeig uns dein Profil und du bekommst einen Gutschein."
+    ];
+
+    const params = new URLSearchParams(window.location.search);
+    const isQr = params.get("from") === "qr";
+
+    const overlay = document.getElementById("overlay");
+    const closeBtn = document.getElementById("closeBtn");
+    const challengeMainValue = document.getElementById("challengeMainValue");
+    const timerValue = document.getElementById("timerValue");
+    const instaHint = document.getElementById("instaHint");
+    const claimBtn = document.getElementById("claimBtn");
+
+    function randomFrom(array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function openModal() {
+      overlay.classList.add("open");
+      overlay.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+    }
+
+    function readStoredChallenge() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return null;
+      }
+
+      try {
+        const parsed = JSON.parse(raw);
+        if (
+          parsed &&
+          typeof parsed.challenge === "string" &&
+          typeof parsed.expiresAt === "number"
+        ) {
+          return parsed;
+        }
+      } catch (error) {
+        console.error("Invalid localStorage challenge data", error);
+      }
+
+      return null;
+    }
+
+    function createChallenge() {
+      return {
+        challenge: randomFrom(challenges),
+        expiresAt: Date.now() + LOCK_MS
+      };
+    }
+
+    function loadOrCreateChallenge() {
+      const existing = readStoredChallenge();
+      const now = Date.now();
+
+      if (existing && existing.expiresAt > now) {
+        return existing;
+      }
+
+      const fresh = createChallenge();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
+      return fresh;
+    }
+
+    function clearChallenge() {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+
+    function updateChallengeUi(challengeText) {
+      challengeMainValue.textContent = challengeText;
+
+      const lowerChallenge = String(challengeText || "").toLowerCase();
+      const needsInstagramPost =
+        lowerChallenge.includes("instagram") || lowerChallenge.includes("selfie");
+
+      instaHint.style.display = needsInstagramPost ? "block" : "none";
+      claimBtn.style.display = needsInstagramPost ? "block" : "none";
+
+      if (!needsInstagramPost) {
+        claimBtn.disabled = false;
+        claimBtn.textContent = "✅ Post erstellt → Gutschein holen";
+        claimBtn.style.opacity = "1";
+      }
+    }
+
+    function startCountdown(expiresAt) {
+      function update() {
+        const remaining = Math.max(0, expiresAt - Date.now());
+        const totalSeconds = Math.floor(remaining / 1000);
+        const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+        const seconds = String(totalSeconds % 60).padStart(2, "0");
+
+        timerValue.textContent = minutes + ":" + seconds;
+
+        if (remaining <= 0) {
+          clearChallenge();
+          challengeMainValue.textContent = "Challenge abgelaufen. Bitte den QR-Code neu scannen.";
+          claimBtn.style.display = "none";
+          instaHint.style.display = "none";
+          return;
+        }
+
+        setTimeout(update, 250);
+      }
+
+      update();
+    }
+
+    closeBtn.addEventListener("click", function () {
+      closeModal();
+    });
+
+    overlay.addEventListener("click", function (event) {
+      if (event.target === overlay) {
+        closeModal();
+      }
+    });
+
+    claimBtn.addEventListener("click", function () {
+      claimBtn.textContent = "🎉 Perfekt! Jetzt dem Team zeigen";
+      claimBtn.disabled = true;
+      claimBtn.style.opacity = "0.85";
+    });
+
+    if (isQr) {
+      try {
+        const challengeData = loadOrCreateChallenge();
+        updateChallengeUi(challengeData.challenge);
+        startCountdown(challengeData.expiresAt);
+        openModal();
+      } catch (error) {
+        challengeMainValue.textContent = "Challenge konnte nicht geladen werden";
+        timerValue.textContent = "--:--";
+        openModal();
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
