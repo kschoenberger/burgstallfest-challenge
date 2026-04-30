@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Landing Page</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+    }
+  </style>
+</head>
+<body class="text-white">
+
+<script>
+/* =========================
+   CONFIG – EDIT HERE ONLY
+========================= */
+const EVENT = {
+  name: "Kiberger Bergaufbewerb - 8. Auflage",
+  date: "2026-06-26T18:30:00", // ISO format for countdown
+  location: "Kirchberg ob der Donau - Burgstallfest",
+  description: "Löschangriff auf den Burgstall - Parallelbewerb in 2. Durchgängen",
+
+  flyerImage: "./bilder/Flyer-Bergaufbewerb_2026-V2-hoch.jpg",
+
+  contact: {
+    name: "Martin Andraschko",
+    phone: "+43 680 3054125",
+    email: "andraschko.martin98@gmail.com"
+  },
+
+  links: {
+    instagram: "https://www.instagram.com/p/DXJpK5uDk5_/?igsh=NGR2ZGN0enN2OWQy",
+    facebook: "https://www.facebook.com/share/1DY5VkiwAb/",
+    youtube: "https://youtube.com/@burgstallfestkirchberg?si=u4k5YhMFA971lKFf"
+  },
+
+  mapEmbed: `
+  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5293.154668139718!2d13.925608355238266!3d48.445451329678484!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47747f37a22897e3%3A0x17729162841f4790!2sDonau%20am%20Berg%20-%20Aussichtsturm!5e0!3m2!1sen!2sat!4v1777549549088!5m2!1sen!2sat"
+  class="w-full h-[300px] md:h-[400px] rounded-2xl border-0" allowfullscreen loading="lazy"></iframe>`
+};
+</script>
+
+<div class="max-w-5xl mx-auto p-4 md:p-8">
+
+  <!-- HERO -->
+  <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-6 md:p-10 shadow-xl">
+    <h1 id="title" class="text-3xl md:text-5xl font-bold mb-4"></h1>
+
+    <p id="facts" class="text-lg text-gray-200 mb-6"></p>
+
+    <!-- COUNTDOWN -->
+    <div id="countdown" class="flex gap-4 text-center mb-6"></div>
+
+    <!-- LINKS -->
+    <div id="links" class="flex flex-wrap gap-3 mb-6"></div>
+
+    <!-- CONTACT -->
+    <div id="contact" class="text-sm text-gray-300"></div>
+  </div>
+
+  <!-- FLYER -->
+  <div class="mt-6">
+    <img id="flyer" class="w-full rounded-3xl shadow-lg" />
+  </div>
+
+  <!-- MAP -->
+  <div class="mt-6 bg-white/10 backdrop-blur-lg p-4 rounded-3xl">
+    <h2 class="text-xl font-semibold mb-3">Location</h2>
+    <div id="map"></div>
+  </div>
+
+</div>
+
+<script>
+// Populate content
+const title = document.getElementById("title");
+const facts = document.getElementById("facts");
+const links = document.getElementById("links");
+const contact = document.getElementById("contact");
+const flyer = document.getElementById("flyer");
+const map = document.getElementById("map");
+
+// Title & facts
+title.innerText = EVENT.name;
+facts.innerHTML = `
+📅 ${new Date(EVENT.date).toLocaleString()}<br>
+📍 ${EVENT.location}<br>
+${EVENT.description}
+`;
+
+// Links (with SVG icons)
+links.innerHTML = Object.entries(EVENT.links)
+  .map(([key, url]) => {
+    const icons = {
+      instagram: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 2.5A2.5 2.5 0 1112 17a2.5 2.5 0 010-5zM18 6.5a1 1 0 11-2 0 1 1 0 012 0z"/></svg>`,
+      facebook: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12a10 10 0 10-11.5 9.9v-7h-2.3V12h2.3V9.8c0-2.3 1.4-3.6 3.4-3.6.99 0 2.02.18 2.02.18v2.2h-1.14c-1.12 0-1.47.7-1.47 1.42V12h2.5l-.4 2.9h-2.1v7A10 10 0 0022 12z"/></svg>`,
+      youtube: `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.5 6.2s-.2-1.7-.9-2.4c-.9-.9-1.9-.9-2.4-1C16.9 2.5 12 2.5 12 2.5h0s-4.9 0-8.2.3c-.5.1-1.5.1-2.4 1C.7 4.5.5 6.2.5 6.2S.2 8.1.2 10v1.9c0 1.9.3 3.8.3 3.8s.2 1.7.9 2.4c.9.9 2.1.9 2.6 1 1.9.2 8 .3 8 .3s4.9 0 8.2-.3c.5-.1 1.5-.1 2.4-1 .7-.7.9-2.4.9-2.4s.3-1.9.3-3.8V10c0-1.9-.3-3.8-.3-3.8zM9.7 14.6V7.8l6.2 3.4-6.2 3.4z"/></svg>`
+    };
+
+    return `
+      <a href="${url}" target="_blank"
+        class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 hover:bg-white/30 transition">
+        ${icons[key] || ""}
+        <span class="capitalize">${key}</span>
+      </a>
+    `;
+  }).join("");
+
+// Contact
+contact.innerHTML = `
+👤 ${EVENT.contact.name}<br>
+📞 <a href="tel:${EVENT.contact.phone.replace(/\s+/g,'')}" class="underline">${EVENT.contact.phone}</a><br>
+✉️ <a href="mailto:${EVENT.contact.email}" class="underline">${EVENT.contact.email}</a>
+`;
+
+// Flyer
+flyer.src = EVENT.flyerImage;
+
+// Map
+map.innerHTML = EVENT.mapEmbed;
+
+// Countdown
+const countdown = document.getElementById("countdown");
+const target = new Date(EVENT.date).getTime();
+
+function updateCountdown() {
+  const now = new Date().getTime();
+  const diff = target - now;
+
+  if (diff <= 0) {
+    countdown.innerHTML = "<div class='text-xl'>Event is live!</div>";
+    return;
+  }
+
+  const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const m = Math.floor((diff / (1000 * 60)) % 60);
+  const s = Math.floor((diff / 1000) % 60);
+
+  countdown.innerHTML = [d, h, m, s].map((v, i) => {
+    const labels = ["Days", "Hours", "Min", "Sec"];
+    return `
+      <div class="bg-white/20 px-4 py-3 rounded-xl">
+        <div class="text-2xl font-bold">${v}</div>
+        <div class="text-xs text-gray-300">${labels[i]}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+
+</body>
+</html>
+
